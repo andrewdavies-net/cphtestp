@@ -16,6 +16,9 @@ reconnect="${MQ_AUTORECONNECT:-MQCNO_RECONNECT_DISABLED}"
 compress="${MQ_COMPRESS:-false}"
 #Force to lower case using ,,
 compress="${compress,,}"
+ccdt="${MQ_CCDT}"
+echo "${ccdt}"
+echo "URL = file:///home/mqperf/cph/ccdt/${ccdt}.json"
 
 
 if [ "${nonpersistent}" -eq 1 ]; then
@@ -25,8 +28,8 @@ else
 fi
 
 if [ -n "${MQ_USERID}" ]; then
-  ./cph -nt $threads -ms 204800 -vo 3 -rl 0 -id 1 -tc Responder -ss 0 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -wt 30 -to -1 $persistent_flags -ar $reconnect -us $userid -pw $password $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
+  ./cph -ccdt "file:///home/mqperf/cph/ccdt/${ccdt}.json" -nt $threads -ms 204800 -vo 3 -rl 0 -id 1 -tc Responder -ss 0 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -wt 30 -to -1 $persistent_flags -ar $reconnect -us $userid -pw $password $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
 else
-  ./cph -nt $threads -ms 204800 -vo 3 -rl 0 -id 1 -tc Responder -ss 0 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -wt 30 -to -1 $persistent_flags -ar $reconnect $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress 
+  ./cph -ccdt "file:///home/mqperf/cph/ccdt/${ccdt}.json" -nt $threads -ms 204800 -vo 3 -rl 0 -id 1 -tc Responder -ss 0 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -wt 30 -to -1 $persistent_flags -ar $reconnect $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress 
 fi
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 export BINDINGS=mqc
 
-threads=${1:-1}
+threads=${MQ_THREAD:-1}
 msgsize=${2:-2048}
 host="${MQ_QMGR_HOSTNAME:-localhost}"
 qmname="${MQ_QMGR_NAME:-PERF0}"
@@ -18,6 +18,9 @@ reconnect="${MQ_AUTORECONNECT:-MQCNO_RECONNECT_DISABLED}"
 compress="${MQ_COMPRESS:-false}"
 #Force to lower case using ,,
 compress="${compress,,}"
+ccdt="${MQ_CCDT}"
+echo "${ccdt}"
+echo "URL = file:///home/mqperf/cph/ccdt/${ccdt}.json"
 
 if [ "${nonpersistent}" -eq 1 ]; then
   persistent_flags="-tx false -pp false"
@@ -27,7 +30,8 @@ fi
 
 
 if [ -n "${MQ_USERID}" ]; then
-  ./cph -nt $threads -ms $msgsize -rl $runlength -id 1 -tc Requester -ss 10 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -to 30 $persistent_flags -ar $reconnect -us $userid -pw $password $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
+  ./cph -ccdt "file:///home/mqperf/cph/ccdt/${ccdt}.json" -nt $threads -ms $msgsize -rl $runlength -id 1 -tc Requester -ss 10 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -to 30 $persistent_flags -ar $reconnect -us $userid -pw $password $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
+  
 else
-  ./cph -nt $threads -ms $msgsize -rl $runlength -id 1 -tc Requester -ss 10 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -to 30 $persistent_flags -ar $reconnect $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
+  ./cph -ccdt "file:///home/mqperf/cph/ccdt/${ccdt}.json" -nt $threads -ms $msgsize -rl $runlength -id 1 -tc Requester -ss 10 -iq $requestq -oq $replyq -db 1 -dx 10 -jp $port -jc $channel -jb $qmname -jt $BINDINGS -jh $host -wi 10 -to 30 $persistent_flags -ar $reconnect $extra -jl ${MQ_TLS_CIPHER} -jw ${MQ_TLS_CERTLABEL} -cz $compress
 fi

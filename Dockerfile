@@ -34,6 +34,7 @@ RUN dnf install -y wget bc file procps procps iputils vim file procps vim syssta
   && useradd --system --uid 900 --gid mqm mqm \
   && useradd --uid 30000 --gid mqm mqperf \
   && mkdir -p /home/mqperf/cph \
+  && mkdir -p /home/mqperf/cph/ccdt \
   # Update the command prompt with the container name, login and cwd
   && echo "export PS1='cphtestp:\u@\h:\w\$ '" >> /home/mqperf/.bashrc \
   && echo "cd ~/cph" >> /home/mqperf/.bashrc
@@ -41,9 +42,9 @@ RUN dnf install -y wget bc file procps procps iputils vim file procps vim syssta
 # By running script, you accept the MQ client license, run ./mqlicense.sh -view to view license
 ENV MQLICENSE=accept
 RUN ./mqlicense.sh -accept \
-  && rpm -Uvh MQSeriesRuntime-9.4.2-0.x86_64.rpm \
-  && rpm -Uvh MQSeriesGSKit-9.4.2-0.x86_64.rpm \
-  && rpm -Uvh MQSeriesClient-9.4.2-0.x86_64.rpm
+  && rpm -Uvh MQSeriesRuntime-9.4.2-1.x86_64.rpm \
+  && rpm -Uvh MQSeriesGSKit-9.4.2-1.x86_64.rpm \
+  && rpm -Uvh MQSeriesClient-9.4.2-1.x86_64.rpm
 
 # Copy files for QM config and scripts
 USER mqperf
@@ -52,7 +53,7 @@ COPY cph/* /home/mqperf/cph/
 COPY *.sh /home/mqperf/cph/
 COPY *.mqsc /home/mqperf/cph/
 COPY qmmonitor2 /home/mqperf/cph/
-
+COPY ccdt/* /home/mqperf/cph/ccdt/
 # Update ownership of files
 USER root
 RUN chown -R mqperf:mqm /opt/mqm/ssl \
@@ -69,5 +70,7 @@ ENV MQ_NON_PERSISTENT=
 ENV MQ_CPH_EXTRA=
 ENV MQ_USERID=
 ENV MQ_COMPRESS=
+ENV MQ_CCDT=
+ENV MQ_RESPONDER_THREADS=2
 
 ENTRYPOINT ["./cphTest.sh"]
